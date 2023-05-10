@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const connection = require('../db/connection');
-const { getCategories } = require('../db/controllers/categories.controller');
+const { getCategories, getAPI } = require('../db/controllers/categories.controller');
 
 app.get('/api/categories', getCategories);
+
+app.get('/api', getAPI);
 
 app.all("*", (req, res) => {
     res.status(404).send({ msg: "Invalid endpoint" });
