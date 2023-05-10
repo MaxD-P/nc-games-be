@@ -1,4 +1,7 @@
 const { categories, fetchCategories } = require('../models/categories.model');
+const endpoints = require('../endpoints.json');
+
+console.log(endpoints);
 
 exports.getCategories = (req, res, next) => {
     fetchCategories().then((categories) => {
@@ -7,4 +10,8 @@ exports.getCategories = (req, res, next) => {
     .catch((err) => {
         next(err)
     })
+}
+
+exports.getAPI = (req, res, next) => {
+    res.status(200).send(endpoints);
 }
