@@ -37,3 +37,35 @@ describe('GET /api', () => {
         })
     })
 })
+
+describe('GET /api/reviews/:review_id', () => {
+    test('GET - STATUS: 200 - responds with review object of corresponding review_id endpoint', () => {
+        return request(app).get('/api/reviews/1')
+        .expect(200)
+        .then((res) => {
+            expect(typeof res.body).toBe('object');
+            expect(res.body.review.title).toBe('Agricola');
+            expect(res.body.review.designer).toBe('Uwe Rosenberg');
+            expect(res.body.review.owner).toBe('mallionaire');
+            expect(res.body.review.review_img_url).toBe('https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700');
+            expect(res.body.review.review_body).toBe('Farmyard fun!');
+            expect(res.body.review.category).toBe('euro game');
+            expect(typeof res.body.review.created_at).toBe('string');
+            expect(res.body.review.votes).toBe(1);
+            })
+    })
+    test('GET - STATUS: 404 - an review_id that is not in the database should respond with this error', () => {
+        return request(app).get('/api/reviews/934')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('review not found')
+        })
+    })
+    test('GET - STATUS: 400 - an invalid review_id syntax should respond with this error', () => {
+        return request(app).get('/api/reviews/bad-endpoint')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('invalid endpoint syntax')
+        })
+    })
+})
