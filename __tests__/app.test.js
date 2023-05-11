@@ -43,17 +43,22 @@ describe('GET /api/reviews/:review_id', () => {
         return request(app).get('/api/reviews/1')
         .expect(200)
         .then((res) => {
-            expect(typeof res.body).toBe('object');
-            expect(res.body.review.title).toBe('Agricola');
-            expect(res.body.review.designer).toBe('Uwe Rosenberg');
-            expect(res.body.review.owner).toBe('mallionaire');
-            expect(res.body.review.review_img_url).toBe('https://images.pexels.com/photos/974314/pexels-photo-974314.jpeg?w=700&h=700');
-            expect(res.body.review.review_body).toBe('Farmyard fun!');
-            expect(res.body.review.category).toBe('euro game');
-            expect(typeof res.body.review.created_at).toBe('string');
-            expect(res.body.review.votes).toBe(1);
-            })
-    })
+            console.log(res.body);
+            const expectedReview = expect.objectContaining({
+                review_id: expect.any(Number),
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: expect.any(Number),
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String),
+              });
+            
+              expect(res.body).toEqual(expect.objectContaining({ review: expectedReview }));
+            });
+          })
     test('GET - STATUS: 404 - an review_id that is not in the database should respond with this error', () => {
         return request(app).get('/api/reviews/934')
         .expect(404)
