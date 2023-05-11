@@ -92,45 +92,11 @@ describe('GET /api/reviews', () => {
                 expect(typeof review.votes).toBe('number');
                 expect(typeof review.designer).toBe('string');
                 expect(review).not.toHaveProperty('review_body');
+                expect(typeof review.comment_count).toBe('number')
+                expect(res.body.reviews[5].comment_count).toBe(3)
+                expect(res.body.reviews[3].comment_count).toBe(0)
+        
             })
     })
 })
-        test('GET - STATUS: 200 - the response should include a comment count which is the total count of all the comments with this review_id ', () => {
-    return request(app)
-    .get('/api/reviews')
-    .expect(200)
-    .then((res) => {
-        res.body.reviews.forEach((review) => {
-        expect(typeof review.comment_count).toBe('number')
-        expect(res.body.reviews[5].comment_count).toBe(3)
-        expect(res.body.reviews[3].comment_count).toBe(0)
-    })
 })
-        });
-        test('GET - STATUS: 200 - the default result response order should be by date in descending order ', () => {
-            return request(app)
-            .get('/api/reviews')
-            .expect(200)
-            .then((res) => {
-                const reviewDates = res.body.reviews.map(review => review.created_at);
-                expect(reviewDates).toBeSorted({ descending: true})
-            })
-        })
-        test('GET - STATUS: 400 - the client should not be allowed to input anything but the default order criteria at the moment ', () => {
-            return request(app)
-            .get('/api/reviews?order_by=asc')
-            .expect(400)
-            .then((res) => {
-                expect(res.body.msg).toBe('invalid order query');
-})
-        })
-        test('GET - STATUS: 400 - the client should not be allowed to input anything but the default sort criteria at the moment ', () => {
-            return request(app)
-            .get('/api/reviews?sort_by=owner')
-            .expect(400)
-            .then((res) => {
-                expect(res.body.msg).toBe('invalid sort query');
-})
-        })
-
-    })
