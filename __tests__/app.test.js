@@ -74,3 +74,24 @@ describe('GET /api/reviews/:review_id', () => {
         })
     })
 })
+
+describe('GET /api/reviews/:review_id/comments', () => {
+    test('GET - STATUS: 200 - responds with an array of the chosen review_id with specified properties', () => {
+        return request(app).get('/api/:review_id/comments')
+        .expect(200)
+        .then((res) => {
+            console.log(res.body);
+            expect(Array.isArray(res.body)).toBe(true);
+            res.body.forEach((comment) => {
+                expect(comment).toHaveProperty('comment_id');
+                expect(comment).toHaveProperty('votes');
+                expect(comment).toHaveProperty('created_at');
+                expect(comment).toHaveProperty('author');
+                expect(comment).toHaveProperty('body');
+      
+            })
+
+            
+    })
+})
+})
