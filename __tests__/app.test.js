@@ -37,3 +37,40 @@ describe('GET /api', () => {
         })
     })
 })
+
+describe('GET /api/reviews/:review_id', () => {
+    test('GET - STATUS: 200 - responds with review object of corresponding review_id endpoint', () => {
+        return request(app).get('/api/reviews/1')
+        .expect(200)
+        .then((res) => {
+            console.log(res.body);
+            const expectedReview = expect.objectContaining({
+                review_id: expect.any(Number),
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: expect.any(Number),
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String),
+              });
+            
+              expect(res.body).toEqual(expect.objectContaining({ review: expectedReview }));
+            });
+          })
+    test('GET - STATUS: 404 - an review_id that is not in the database should respond with this error', () => {
+        return request(app).get('/api/reviews/934')
+        .expect(404)
+        .then((res) => {
+            expect(res.body.msg).toBe('review not found')
+        })
+    })
+    test('GET - STATUS: 400 - an invalid review_id syntax should respond with this error', () => {
+        return request(app).get('/api/reviews/bad-endpoint')
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe('invalid endpoint syntax')
+        })
+    })
+})
