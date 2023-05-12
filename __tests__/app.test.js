@@ -43,7 +43,6 @@ describe('GET /api/reviews/:review_id', () => {
         return request(app).get('/api/reviews/1')
         .expect(200)
         .then((res) => {
-            console.log(res.body);
             const expectedReview = expect.objectContaining({
                 review_id: expect.any(Number),
                 title: expect.any(String),
@@ -75,23 +74,54 @@ describe('GET /api/reviews/:review_id', () => {
     })
 })
 
-// describe('GET /api/reviews/:review_id/comments', () => {
-//     test('GET - STATUS: 200 - responds with an array of the chosen review_id with specified properties', () => {
-//         return request(app).get('/api/:review_id/comments')
-//         .expect(200)
-//         .then((res) => {
-//             console.log(res.body);
-//             expect(Array.isArray(res.body)).toBe(true);
-//             res.body.forEach((comment) => {
-//                 expect(comment).toHaveProperty('comment_id');
-//                 expect(comment).toHaveProperty('votes');
-//                 expect(comment).toHaveProperty('created_at');
-//                 expect(comment).toHaveProperty('author');
-//                 expect(comment).toHaveProperty('body');
+describe('GET /api/reviews/:review_id/comments', () => {
+    test('GET - STATUS: 200 - responds with an array of the chosen review_id with specified properties', () => {
+        return request(app).get('/api/reviews/3/comments')
+        .expect(200)
+        .then((res) => {
+            expect(Array.isArray(res.body.comments)).toBe(true);
+            res.body.comments.forEach((comment) => {
+                expect(comment).toHaveProperty('comment_id');
+                expect(comment).toHaveProperty('votes');
+                expect(comment).toHaveProperty('created_at');
+                expect(comment).toHaveProperty('author');
+                expect(comment).toHaveProperty('body');
       
-//             })
+            })
 
             
-//     })
-// })
-// })
+    })
+})
+
+test('GET - STATUS: 200 - responds with comments sorted by created_at descending; i.e. newest first', () => {
+    return request(app)
+      .get('/api/reviews/3/comments')
+      .expect(200)
+      .then((res) => {
+            const comments = res.body.comments;
+            console.log(comments);
+            const createdAtValues = comments.map((comment) => comment.created_at);
+            expect(createdAtValues).toBeSorted({
+              descending: true,
+            })
+          })
+      })
+
+      test('GET - STATUS: 404 - responds with "review not found" message for non-existent review ID', () => {
+        return request(app)
+          .get(`/api/reviews/9021/comments`)
+          .expect(404)
+          .then((res) => {
+            expect(res.body).toEqual({ msg: 'review not found' })
+          })
+      })
+      test('GET - STATUS: 200 - if the review has no comments, it should return an empty array', () => {
+        return request(app)
+          .get(`/api/reviews/1/comments`)
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comments).toEqual([]);
+          });
+      });
+
+          })

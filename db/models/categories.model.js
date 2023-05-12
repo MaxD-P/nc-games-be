@@ -19,4 +19,35 @@ exports.selectReviewById = (review_id) => {
         });
     }
 
+exports.selectCommentByReviewId = (review_id) => {
+        const query = `
+          SELECT * 
+          FROM comments 
+          WHERE review_id = $1
+          ORDER BY created_at DESC
+        `;
+        const values = [review_id];      
+        return connection
+        .query(query, values)
+        .then((result) => {
+          const comments = result.rows;
+    
+          if (comments.length === 0) {
+            return connection
+              .query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+              .then((reviewResult) => {
+                const review = reviewResult.rows[0];
+    
+                if (!review) {
+                  return Promise.reject({ status: 404, msg: 'review not found' });
+                }
+    
+                return [];
+              });
+          }
+    
+          return comments;
+        });
+    };
+    
 
