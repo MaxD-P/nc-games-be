@@ -103,8 +103,6 @@ test('GET - STATUS: 200 - responds with comments sorted by created_at descending
       .expect(200)
       .then((res) => {
             const comments = res.body.comments;
-            //const createdAtValues = comments.map((comment) => comment.created_at);
-            //console.log(createdAtValues);
             expect(comments).toBeSortedBy('created_at',
               { descending: true })
           })
