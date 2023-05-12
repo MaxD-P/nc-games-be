@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-const connection = require('../db/connection');
-const { getCategories, getAPI, getReviewById, getAllReviews } = require('../db/controllers/categories.controller');
+const connection = require('./db/connection');
+const { getCategories, getAPI, getReviewById, getAllReviews } = require('./db/controllers/categories.controller');
 
 app.get('/api/categories', getCategories);
 
