@@ -1,6 +1,6 @@
 const testData = require('../db/data/test-data/index');
 const request = require ('supertest');
-const app = require('../db/app.js');
+const app = require('../app.js');
 const seed = require('../db/seeds/seed');
 const db = require ('../db/connection');
 
@@ -126,3 +126,29 @@ test('GET - STATUS: 200 - responds with comments sorted by created_at descending
       });
 
           })
+describe('GET /api/reviews', () => {
+    test('GET - STATUS: 200 - responds with a reviews array of all review objects with their relevant properties, excluding review_body', () => {
+        return request(app)
+        .get('/api/reviews')
+        .expect(200)
+        .then((res) => {
+            expect(res.body.reviews.length).toBe(13);
+            expect(Array.isArray(res.body.reviews)).toBe(true);
+            res.body.reviews.forEach((review) => {
+                expect(typeof review.owner).toBe('string');
+                expect(typeof review.title).toBe('string');
+                expect(typeof review.review_id).toBe('number');
+                expect(typeof review.category).toBe('string');
+                expect(typeof review.review_img_url).toBe('string');
+                expect(typeof review.created_at).toBe('string');
+                expect(typeof review.votes).toBe('number');
+                expect(typeof review.designer).toBe('string');
+                expect(review).not.toHaveProperty('review_body');
+                expect(typeof review.comment_count).toBe('number')
+                expect(res.body.reviews[5].comment_count).toBe(3)
+                expect(res.body.reviews[3].comment_count).toBe(0)
+        
+            })
+    })
+})
+})
