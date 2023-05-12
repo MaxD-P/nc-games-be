@@ -76,9 +76,12 @@ describe('GET /api/reviews/:review_id', () => {
 
 describe('GET /api/reviews/:review_id/comments', () => {
     test('GET - STATUS: 200 - responds with an array of the chosen review_id with specified properties', () => {
-        return request(app).get('/api/reviews/3/comments')
+        const testReviewId = 3
+        return request(app).get(`/api/reviews/${testReviewId}/comments`)
         .expect(200)
         .then((res) => {
+            let commentLength = (res.body.comments);
+            expect(commentLength.length).toBe(3);
             expect(Array.isArray(res.body.comments)).toBe(true);
             res.body.comments.forEach((comment) => {
                 expect(comment).toHaveProperty('comment_id');
@@ -86,6 +89,7 @@ describe('GET /api/reviews/:review_id/comments', () => {
                 expect(comment).toHaveProperty('created_at');
                 expect(comment).toHaveProperty('author');
                 expect(comment).toHaveProperty('body');
+                expect(comment).toHaveProperty('review_id', testReviewId);
       
             })
 
@@ -99,10 +103,10 @@ test('GET - STATUS: 200 - responds with comments sorted by created_at descending
       .expect(200)
       .then((res) => {
             const comments = res.body.comments;
-            const createdAtValues = comments.map((comment) => comment.created_at);
-            expect(createdAtValues).toBeSorted({
-              descending: true,
-            })
+            //const createdAtValues = comments.map((comment) => comment.created_at);
+            //console.log(createdAtValues);
+            expect(comments).toBeSortedBy('created_at',
+              { descending: true })
           })
       })
 
