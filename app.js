@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-const connection = require('./db/connection');
-const { getCategories, getAPI, getReviewById, getAllReviews } = require('./db/controllers/categories.controller');
+const connection = require('../be-nc-games/db/connection');
+const { getCategories, getAPI, getReviewById, getAllReviews, getCommentByReviewId } = require('../be-nc-games/db/controllers/categories.controller');
 
 app.get('/api/categories', getCategories);
 
@@ -9,6 +9,7 @@ app.get('/api', getAPI);
 
 app.get('/api/reviews/:review_id', getReviewById);
 
+app.get('/api/reviews/:review_id/comments', getCommentByReviewId)
 app.get('/api/reviews', getAllReviews);
 
 app.all("*", (req, res) => {

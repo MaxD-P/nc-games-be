@@ -74,6 +74,58 @@ describe('GET /api/reviews/:review_id', () => {
     })
 })
 
+describe('GET /api/reviews/:review_id/comments', () => {
+    test('GET - STATUS: 200 - responds with an array of the chosen review_id with specified properties', () => {
+        const testReviewId = 3
+        return request(app).get(`/api/reviews/${testReviewId}/comments`)
+        .expect(200)
+        .then((res) => {
+            let commentLength = (res.body.comments);
+            expect(commentLength.length).toBe(3);
+            expect(Array.isArray(res.body.comments)).toBe(true);
+            res.body.comments.forEach((comment) => {
+                expect(comment).toHaveProperty('comment_id');
+                expect(comment).toHaveProperty('votes');
+                expect(comment).toHaveProperty('created_at');
+                expect(comment).toHaveProperty('author');
+                expect(comment).toHaveProperty('body');
+                expect(comment).toHaveProperty('review_id', testReviewId);
+      
+            })
+
+            
+    })
+})
+
+test('GET - STATUS: 200 - responds with comments sorted by created_at descending; i.e. newest first', () => {
+    return request(app)
+      .get('/api/reviews/3/comments')
+      .expect(200)
+      .then((res) => {
+            const comments = res.body.comments;
+            expect(comments).toBeSortedBy('created_at',
+              { descending: true })
+          })
+      })
+
+      test('GET - STATUS: 404 - responds with "review not found" message for non-existent review ID', () => {
+        return request(app)
+          .get(`/api/reviews/9021/comments`)
+          .expect(404)
+          .then((res) => {
+            expect(res.body).toEqual({ msg: 'review not found' })
+          })
+      })
+      test('GET - STATUS: 200 - if the review has no comments, it should return an empty array', () => {
+        return request(app)
+          .get(`/api/reviews/1/comments`)
+          .expect(200)
+          .then((res) => {
+            expect(res.body.comments).toEqual([]);
+          });
+      });
+
+          })
 describe('GET /api/reviews', () => {
     test('GET - STATUS: 200 - responds with a reviews array of all review objects with their relevant properties, excluding review_body', () => {
         return request(app)

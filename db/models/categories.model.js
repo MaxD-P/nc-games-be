@@ -16,9 +16,39 @@ exports.selectReviewById = (review_id) => {
         } else {
             return result.rows[0]
         }
-        });
+        })
     }
 
+    exports.selectCommentByReviewId = (review_id) => {
+      return connection
+        .query(`SELECT * FROM reviews WHERE review_id = $1`, [review_id])
+        .then((reviewResult) => {
+          const review = reviewResult.rows[0];
+          
+          if (!review) {
+            return Promise.reject({ status: 404, msg: 'review not found' });
+          }
+          
+          const query = `
+            SELECT * 
+            FROM comments 
+            WHERE review_id = $1
+            ORDER BY created_at DESC
+          `;
+          const values = [review_id];
+          
+          return connection
+            .query(query, values)
+            .then((result) => {
+              const comments = result.rows;
+              if (comments.length === 0) {
+                return [];
+              } else {
+                return comments;
+              }
+            })
+        })
+    }
 exports.fetchAllReviews = (sort_by = "created_at", order_by = "desc") => {
     const validSortColumns = ["created_at"];
     if (!validSortColumns.includes(sort_by)) {
@@ -63,3 +93,4 @@ return connection.query(queryStr).then((result) => {
 }
 
 
+    
