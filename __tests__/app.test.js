@@ -152,3 +152,21 @@ describe('GET /api/reviews', () => {
     })
 })
 })
+
+describe('POST /api/reviews/:review_id/comments', () => {
+    test('POST - STATUS: 201 - the request body should accept an object with a username and a body and return the posted comment', () => {
+        return request(app)
+        .post('/api/reviews/1/comments')
+        .send({
+            username: 'mallionaire',
+            body: 'I love this game'
+        })
+        .expect(201)
+        .then((res) => {
+            console.log(res.body);
+            expect(res.body.comment.author).toBe('mallionaire')
+            expect(res.body.comment.body).toBe('I love this game')
+            expect(res.body.comment).toHaveProperty('comment_id', 7)
+        })
+    })
+})

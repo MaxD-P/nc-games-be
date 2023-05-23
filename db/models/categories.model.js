@@ -92,5 +92,21 @@ return connection.query(queryStr).then((result) => {
 })    
 }
 
+exports.insertComment = (newComment, review_id) => {
+ const {username, body} = newComment
 
+
+  const queryStr = "INSERT INTO comments (author, body, review_id) VALUES ($1, $2, $3) RETURNING *;";
+
+  console.log(queryStr)
+
+  const queryValues = [username, body, review_id];
+  console.log(queryValues);
+  return connection.query(queryStr, queryValues).then(({rows}) => {
+    return rows[0]
+  })
+  .catch(err => {
+    console.log(err, "err in the model")
+  })
+}
     
