@@ -69,7 +69,7 @@ describe('GET /api/reviews/:review_id', () => {
         return request(app).get('/api/reviews/bad-endpoint')
         .expect(400)
         .then((res) => {
-            expect(res.body.msg).toBe('invalid endpoint syntax')
+            expect(res.body.msg).toBe('Invalid value. You must input a number.')
         })
     })
 })
@@ -167,6 +167,37 @@ describe('POST /api/reviews/:review_id/comments', () => {
             expect(res.body.comment.author).toBe('mallionaire')
             expect(res.body.comment.body).toBe('I love this game')
             expect(res.body.comment).toHaveProperty('comment_id', 7)
+        })
+    })
+})
+
+describe('PATCH /api/reviews/:review_id', () => {
+    test('PATCH - STATUS: 200 - the request body should accept an object and a newVote that updates the votes property in the database', () => {
+        const dataInput = { 
+            inc_votes: 1
+            }
+        return request(app)
+        .patch('/api/reviews/1')
+        .send(dataInput)
+        .expect(200)
+        .then((res) => {
+            console.log(res.body);
+            expect(res.body).toHaveProperty('review_id')
+            expect(res.body).toHaveProperty('votes')
+            expect(res.body.votes).toBe(2);
+        })
+    })
+    test('PATCH - STATUS: 400 - should reject non-numeric values for inc_votes', () => {
+        const dataInput = { 
+            inc_votes: "a string"
+        }
+        const falseInput = {}
+        return request(app)
+        .patch('/api/reviews/1')
+        .send(dataInput)
+        .expect(400)
+        .then((res) => {
+            expect(res.body.msg).toBe("Invalid value. You must input a number.");
         })
     })
 })

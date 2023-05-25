@@ -1,4 +1,4 @@
-const { categories, fetchCategories, selectReviewById, fetchAllReviews, selectCommentByReviewId, insertComment } = require('../models/categories.model');
+const { categories, fetchCategories, selectReviewById, fetchAllReviews, selectCommentByReviewId, insertComment, fetchVoteCount } = require('../models/categories.model');
 const endpoints = require('../endpoints.json');
 
 exports.getCategories = (req, res, next) => {
@@ -54,3 +54,20 @@ exports.postComment = (req, res, next) => {
         next(err)
     })
 }
+
+exports.updateVoteCount = (req, res, next) => {
+    console.log("shift")
+    const {review_id}  = req.params
+    const {inc_votes}  = req.body
+
+  
+    return fetchVoteCount(review_id, inc_votes)
+      .then((updatedReview) => {
+        const { review_id, votes } = updatedReview
+        res.status(200).send({ review_id, votes });
+      })
+      .catch((err) => {
+        next(err);
+      });
+  }
+  
