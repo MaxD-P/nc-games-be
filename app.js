@@ -1,7 +1,9 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const connection = require('../be-nc-games/db/connection');
 const { getCategories, getAPI, getReviewById, getAllReviews, getCommentByReviewId, postComment, updateVoteCount } = require('../be-nc-games/db/controllers/categories.controller');
+app.use(cors());
 app.use(express.json());
 
 app.get('/api/categories', getCategories);
