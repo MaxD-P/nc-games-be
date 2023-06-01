@@ -110,8 +110,7 @@ exports.insertComment = (newComment, review_id) => {
   })
 }
 
-exports.fetchVoteCount = (inc_votes, review_id) => {
-  console.log(JSON.parse(inc_votes))
+exports.fetchVoteCount = (review_id, inc_votes) => {
   return connection
   .query(
     `UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *`,
